@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Button, StyleSheet, ImageBackground } from 'react-native';
+import { View, Button, StyleSheet, ImageBackground, Dimensions } from 'react-native';
 import startMainTabs from '../MainTabs/startMainTabs';
 import DefaultInput from '../../components/UI/DefaultInput';
 import HeadingText from '../../components/UI/HeadingText';
@@ -13,24 +13,41 @@ class AuthScreen extends Component {
   }
 
   render () {
+    let headingText = null;
+
+    if (Dimensions.get('window').height > 500) {
+      headingText = (
+        <MainText>
+          <HeadingText>Please Log In</HeadingText>
+        </MainText>
+      );
+    }
     return(
       <View style={styles.container}>
         <ImageBackground source={Background} style={styles.backgroundImage}>
-          <MainText>
-            <HeadingText>Please Log In</HeadingText>
-          </MainText>
+          {headingText}
           <ButtonWithBackground onPress={this.loginHandler} color="#29aaf4">Switch to Login</ButtonWithBackground>
           <View style={styles.inputContainer}>
             <DefaultInput 
               placeholder="Your E-mail Address"
               style={styles.input}
             />
-            <DefaultInput 
-              placeholder="Password"
-            />
-            <DefaultInput 
-              placeholder="Confirm Password"
-            />
+            <View style={styles.passwordContainer}>
+              <View style={styles.passwordWrapper}>
+                <DefaultInput 
+                  placeholder="Password"
+                  style={styles.input}
+                />
+              </View>
+              <View style={styles.passwordWrapper}>
+                <DefaultInput 
+                  placeholder="Confirm Password"
+                  style={styles.input}
+                />
+              </View>
+              
+              
+            </View>
           </View>
           <ButtonWithBackground onPress={this.loginHandler} color="#29aaf4">SUBMIT</ButtonWithBackground>
         </ImageBackground>
@@ -55,6 +72,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
+  },
+  passwordContainer: {
+    flexDirection: Dimensions.get('window').height > 500 ? 'column' : 'row',
+    justifyContent: 'space-between'
+  },
+  passwordWrapper: {
+    width: Dimensions.get('window').height > 500 ? '100%' : '45%'
   }
 })
 
