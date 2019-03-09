@@ -2,37 +2,6 @@ import { Navigation } from 'react-native-navigation';
 import { Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'
 
-Navigation.setDefaultOptions({
-    topBar: {
-      background: {
-        color: '#039893'
-      },
-      title: {
-        color: 'white',
-      },
-      backButton: {
-        title: '', // Remove previous screen name from back button
-        color: 'white'
-      },
-      buttonColor: 'white',
-    },
-    statusBar: {
-      style: 'light'
-    },
-    layout: {
-      orientation: ['portrait']
-    },
-    bottomTabs: {
-      titleDisplayMode: 'alwaysShow'
-    },
-    bottomTab: {
-      textColor: 'gray',
-      selectedTextColor: 'black',
-      iconColor: 'gray',
-      selectedIconColor: 'black',
-    }
-  });
-
 const startTabs = () => {
     Promise.all([
         Icon.getImageSource(Platform.OS === 'android' ? 'md-map' : 'ios-map', 30),

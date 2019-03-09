@@ -32,7 +32,39 @@ Navigation.registerComponent(`awesome-places.SharePlaceScreen`, () => WrappedCom
 Navigation.registerComponent(`awesome-places.PlaceDetailScreen`, () => WrappedComponent(PlaceDetailScreen));
 Navigation.registerComponent(`awesome-places.SideDrawerScreen`, () => WrappedComponent(SideDrawerScreen));
 
+
+
 Navigation.events().registerAppLaunchedListener(() => {
+    Navigation.setDefaultOptions({
+        topBar: {
+          background: {
+            color: 'orange'
+          },
+          title: {
+            color: 'white',
+          },
+          backButton: {
+            title: '', // Remove previous screen name from back button
+            color: 'white'
+          },
+          buttonColor: 'white',
+        },
+        statusBar: {
+          style: 'light'
+        },
+        layout: {
+          orientation: ['portrait']
+        },
+        bottomTabs: {
+          titleDisplayMode: 'alwaysShow'
+        },
+        bottomTab: {
+          textColor: 'gray',
+          selectedTextColor: 'orange',
+          iconColor: 'gray',
+          selectedIconColor: 'orange',
+        }
+    });
     Navigation.setRoot({
     root: {
         component: {
