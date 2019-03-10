@@ -7,6 +7,8 @@ import MainText from '../../components/UI/MainText';
 import ButtonWithBackground from '../../components/UI/ButtonWithBackground';
 import Background from '../../assets/background.jpg';
 
+import validate from '../../utility/validation';
+
 class AuthScreen extends Component {
   state = {
     viewMode: Dimensions.get('window').height > 500 ? 'portrait' : 'landscape',
@@ -55,13 +57,37 @@ class AuthScreen extends Component {
   }
 
   updateInputState = (key, value) => {
+    let connectedValue = {};
+
+    if (this.state.controls[key].validationRules.equalTo) {
+      const equalControl = this.state.controls[key].validationRules.equalTo;
+      const  equalValue = this.state.controls[equalControl].value;
+      connectedValue = {
+        ...connectedValue,
+        equalTo: equalValue
+      }
+    }
+
+    if (key === 'password') {
+      connectedValue = {
+        ...connectedValue,
+        equalTo: value
+      }
+    }
+
+
     this.setState(prevState => {
       return {
         controls: {
           ...prevState.controls,
+          confirmPassword: {
+            ...prevState.controls.confirmPassword,
+            valid: key === 'password' ? validate(prevState.controls.confirmPassword.value, prevState.controls.confirmPassword.validationRules, connectedValue) : prevState.controls.confirmPassword.valid
+          },
           [key]: {
             ...prevState.controls[key],
-            value: value
+            value: value,
+            valid: validate(value, prevState.controls[key].validationRules, connectedValue)
           }
         }
       }
