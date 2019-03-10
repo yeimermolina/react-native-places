@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { Navigation } from 'react-native-navigation';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
-import { View, Image, Text, Button, StyleSheet, TouchableOpacity, Platform } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity, Platform, Dimensions } from "react-native";
 import { deletePlace} from '../../store/actions'
+import MapView from 'react-native-maps';
 
 
 class PlaceDetail extends Component {
@@ -15,7 +16,18 @@ class PlaceDetail extends Component {
     return (
       <View style={styles.container}>
         <View>
-          <Image source={this.props.selectedPlace.image} style={styles.placeImage} />
+          <View>
+            <MapView
+              initialRegion={{
+                ...this.props.selectedPlace.location,
+                latitudeDelta: 0.0122,
+                longitudeDelta: Dimensions.get('window').width / Dimensions.get('window').height * 0.0122
+              }}
+              style={styles.map}
+            >
+              <MapView.Marker coordinate={this.props.selectedPlace.location} />
+            </MapView>
+          </View>
           <Text style={styles.placeName}>{this.props.selectedPlace.name}</Text>
         </View>
         <View>
@@ -47,6 +59,10 @@ const styles = StyleSheet.create({
   deleteButton: {
     alignItems: 'center',
     flexDirection: 'row'
+  },
+  map: {
+    width: "100%",
+    height: 250
   }
 });
 
