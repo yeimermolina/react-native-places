@@ -13,10 +13,6 @@ export const addPlace = (placeName, location, image) => {
     //     image
     // }
     return dispatch => {
-        const placeData = {
-            name: placeName,
-            location: location
-        };
         fetch("https://us-central1-findplaces-1552244770863.cloudfunctions.net/storeImage", {
             method: 'POST',
             body: JSON.stringify({
@@ -26,17 +22,23 @@ export const addPlace = (placeName, location, image) => {
         .catch(err => console.log('errr', err))
         .then(res => res.json())
         .then(parsedRes => {
-            console.log('bien', parsedRes)
+            const placeData = {
+                name: placeName,
+                location: location,
+                image: parsedRes.imageUrl
+            };
+
+            return fetch(`${URL}/places.json`, {
+                method: 'POST',
+                body: JSON.stringify(placeData)
+            });
         })
-        // fetch(`${URL}/places.json`, {
-        //     method: 'POST',
-        //     body: JSON.stringify(placeData)
-        // })
-        // .catch(err => console.log(err))
-        // .then(res => res.json())
-        // .then(parsedRes => {
-        //     console.log(parsedRes);
-        // })
+        .catch(err => console.log(err))
+        .then(res => res.json())
+        .then(parsedRes => {
+            console.log(parsedRes);
+        })
+        
     }
 }
 
