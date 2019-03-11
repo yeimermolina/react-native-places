@@ -58,25 +58,31 @@ export const setPlaces = places => {
 export const getPlaces = () => {
     return dispatch => {
         fetch(`${URL}/places.json`)
-        .catch(err => {
-            alert("Something went wrong");
-        })
         .then(res => res.json())
         .then(parsedRes => {
-            const places = [];
-            for (let key in parsedRes) {
-                places.push(
-                    {
-                        ...parsedRes[key],
-                        image: {
-                            uri: parsedRes[key].image
-                        },
-                        key
-                    }
-                )
-            }
             dispatch(setPlaces(places));
-        });
+            if (parsedRes.error) {
+                alert("Something went wrong");
+            } else {
+                const places = [];
+                for (let key in parsedRes) {
+                    places.push(
+                        {
+                            ...parsedRes[key],
+                            image: {
+                                uri: parsedRes[key].image
+                            },
+                            key
+                        }
+                    )
+                }
+            }
+        })
+        .catch(err => {
+            console.log('ddddd');
+            alert("Something went wrong");
+        })
+        ;
     }
 }
 
