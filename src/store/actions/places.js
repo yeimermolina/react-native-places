@@ -1,6 +1,5 @@
 import { 
-    ADD_PLACE,
-    DELETE_PLACE
+    SET_PLACES
 } from './actionTypes';
 
 import {
@@ -11,12 +10,6 @@ import {
 const URL = 'https://findplaces-1552244770863.firebaseio.com';
 
 export const addPlace = (placeName, location, image) => {
-    // return {
-    //     type: ADD_PLACE,
-    //     placeName,
-    //     location,
-    //     image
-    // }
     return dispatch => {
         dispatch(uiStartLoading());
         fetch("https://us-central1-findplaces-1552244770863.cloudfunctions.net/storeImage", {
@@ -55,9 +48,34 @@ export const addPlace = (placeName, location, image) => {
     }
 }
 
-export const deletePlace = (key) => {
+export const setPlaces = places => {
     return {
-        type: DELETE_PLACE,
-        placeKey: key
+        type: SET_PLACES,
+        places
+    }
+}
+
+export const getPlaces = () => {
+    return dispatch => {
+        fetch(`${URL}/places.json`)
+        .catch(err => {
+            alert("Something went wrong");
+        })
+        .then(res => res.json())
+        .then(parsedRes => {
+            const places = [];
+            for (let key in parsedRes) {
+                places.push(
+                    {
+                        ...parsedRes[key],
+                        image: {
+                            uri: parsedRes[key].image
+                        },
+                        key
+                    }
+                )
+            }
+            dispatch(setPlaces(places));
+        });
     }
 }

@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native
 import { connect } from 'react-redux';
 
 import PlaceList from '../../components/PlaceList/PlaceList'
+import { getPlaces } from '../../store/actions'
 
 class FindPlaceScreen extends Component {
   state = {
@@ -47,7 +48,11 @@ class FindPlaceScreen extends Component {
         }
       }
     });
-    } 
+    }
+
+    componentDidMount () {
+      this.props.onLoadPlaces();
+    }
 
     render() {
       let content = (
@@ -115,4 +120,10 @@ const mapStateToProps = state => {
     };
 }
 
-export default connect(mapStateToProps, null)(Wrapper(FindPlaceScreen));
+const mapDispatchToProps = dispatch => {
+  return {
+    onLoadPlaces: () => dispatch(getPlaces())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Wrapper(FindPlaceScreen));
