@@ -4,46 +4,58 @@ import {
 
 import {
     uiStartLoading,
-    uiStopLoading
+    uiStopLoading,
+    authGetToken
 } from './index';
 
 const URL = 'https://findplaces-1552244770863.firebaseio.com';
 
 export const addPlace = (placeName, location, image) => {
     return dispatch => {
+        let authToken;
         dispatch(uiStartLoading());
-        fetch("https://us-central1-findplaces-1552244770863.cloudfunctions.net/storeImage", {
-            method: 'POST',
-            body: JSON.stringify({
-                image: image.base64
+        dispatch(authGetToken())
+            .then((token) => {
+                authToken = token;
+                return fetch("https://us-central1-findplaces-1552244770863.cloudfunctions.net/storeImage", {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        image: image.base64
+                    }),
+                    headers: {
+                        "Authorization": "Bearer " + authToken
+                    }
+                });
             })
-        })
-        .catch(err => {
-            alert("Something went wrong");
-            dispatch(uiStopLoading());
-        })
-        .then(res => res.json())
-        .then(parsedRes => {
-            const placeData = {
-                name: placeName,
-                location: location,
-                image: parsedRes.imageUrl
-            };
+            .catch(() => {
+                alert("No valid token")
+            })
+            .catch(err => {
+                alert("Something went wrong");
+                dispatch(uiStopLoading());
+            })
+            .then(res => res.json())
+            .then(parsedRes => {
+                const placeData = {
+                    name: placeName,
+                    location: location,
+                    image: parsedRes.imageUrl
+                };
 
-            return fetch(`${URL}/places.json`, {
-                method: 'POST',
-                body: JSON.stringify(placeData)
-            });
-        })
-        .catch(err => {
-            alert("Something went wrong");
-            dispatch(uiStopLoading());
-        })
-        .then(res => res.json())
-        .then(parsedRes => {
-            console.log(parsedRes);
-            dispatch(uiStopLoading());
-        })
+                return fetch(`${URL}/places.json?auth=${authToken}`, {
+                    method: 'POST',
+                    body: JSON.stringify(placeData)
+                });
+            })
+            .catch(err => {
+                alert("Something went wrong");
+                dispatch(uiStopLoading());
+            })
+            .then(res => res.json())
+            .then(parsedRes => {
+                console.log(parsedRes);
+                dispatch(uiStopLoading());
+            })
         
     }
 }
@@ -57,31 +69,37 @@ export const setPlaces = places => {
 
 export const getPlaces = () => {
     return dispatch => {
-        fetch(`${URL}/places.json`)
-        .then(res => res.json())
-        .then(parsedRes => {
-            dispatch(setPlaces(places));
-            if (parsedRes.error) {
-                alert("Something went wrong");
-            } else {
-                const places = [];
-                for (let key in parsedRes) {
-                    places.push(
-                        {
-                            ...parsedRes[key],
-                            image: {
-                                uri: parsedRes[key].image
-                            },
-                            key
-                        }
-                    )
+        dispatch(authGetToken())
+            .then((token) => {
+                return fetch(`${URL}/places.json?auth=${token}`);
+            })
+            .catch(() => {
+                alert("No valid token")
+            })
+            .then(res => res.json())
+            .then(parsedRes => {
+                if (parsedRes.error) {
+                    alert("Something went wrong");
+                } else {
+                    const places = [];
+                    for (let key in parsedRes) {
+                        places.push(
+                            {
+                                ...parsedRes[key],
+                                image: {
+                                    uri: parsedRes[key].image
+                                },
+                                key
+                            }
+                        )
+                    }
+                    dispatch(setPlaces(places));
                 }
-            }
-        })
-        .catch(err => {
-            console.log('ddddd');
-            alert("Something went wrong");
-        })
+            })
+            .catch(err => {
+                alert("Something went wrong");
+            })
+        
         ;
     }
 }
@@ -95,15 +113,21 @@ const removePlace = key => {
 
 export const deletePlace = (placeId) => {
     return dispatch => {
-        fetch(`${URL}/places/${placeId}.json`, {
-            method: 'DELETE'
-        })
-        .catch(err => {
-            alert("Something went wrong");
-        })
-        .then(res => res.json())
-        .then(parsedRes => {
-            dispatch(removePlace(placeId));
-        });
+        dispatch(authGetToken())
+            .then((token) => {
+                return fetch(`${URL}/places/${placeId}.json?auth=${token}`, {
+                    method: 'DELETE'
+                });
+            })
+            .catch(() => {
+                alert("No valid token")
+            })
+            .catch(err => {
+                alert("Something went wrong");
+            })
+            .then(res => res.json())
+            .then(parsedRes => {
+                dispatch(removePlace(placeId));
+            });
     }
 }

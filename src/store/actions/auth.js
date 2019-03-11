@@ -5,7 +5,7 @@ import startMainTabs from '../../screens/MainTabs/startMainTabs';
 const API_KEY = 'AIzaSyCVeG4SFHzOWO9tOWJddFmFXKQmicBT2yQ'
 
 export const tryAuth = (authData, authMode) => {
-    return dispatch => {
+    return (dispatch) => {
         dispatch(uiStartLoading());
         let url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser';
         if (authMode === 'login') {
@@ -45,3 +45,17 @@ export const authSetToken = token => {
         token: token
     }
 }
+
+export const authGetToken = () => {
+    return (dispatch, getState) => {
+        return new Promise((resolve, reject) => {
+            const token = getState().auth.token;
+            if(!token) {
+                return reject();
+            } else {
+                resolve(token);
+            }
+        })
+        
+    };
+};
