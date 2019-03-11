@@ -7,10 +7,10 @@ import {
   KeyboardAvoidingView, 
   Keyboard, 
   TouchableWithoutFeedback,
-  Platform
+  Platform,
+  ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
-import startMainTabs from '../MainTabs/startMainTabs';
 import DefaultInput from '../../components/UI/DefaultInput';
 import HeadingText from '../../components/UI/HeadingText';
 import MainText from '../../components/UI/MainText';
@@ -82,7 +82,6 @@ class AuthScreen extends Component {
     };
 
     this.props.onLogin(authData);
-    startMainTabs();
   }
 
   updateInputState = (key, value) => {
@@ -129,6 +128,20 @@ class AuthScreen extends Component {
     let headingText = null;
     let confirmPasswordControl = null;
 
+    let submitButton = (
+      <ButtonWithBackground 
+        onPress={this.loginHandler} 
+        color="#29aaf4"
+        disabled={
+          !controls.email.valid || 
+          !controls.password.valid ||
+          !controls.confirmPassword.valid && this.state.authMode === 'signup'
+        }
+      >
+        SUBMIT
+      </ButtonWithBackground>
+    )
+
     if (this.state.authMode === 'signup') {
       confirmPasswordControl = (
         <View 
@@ -160,6 +173,11 @@ class AuthScreen extends Component {
         </MainText>
       );
     }
+
+    if (this.props.isLoading) {
+      submitButton = <ActivityIndicator />
+    }
+
     return(
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'android' ? '' : 'padding'}>
         <ImageBackground source={Background} style={styles.backgroundImage}>
@@ -212,17 +230,7 @@ class AuthScreen extends Component {
               </View>
             </View>
           </TouchableWithoutFeedback>
-          <ButtonWithBackground 
-            onPress={this.loginHandler} 
-            color="#29aaf4"
-            disabled={
-              !controls.email.valid || 
-              !controls.password.valid ||
-              !controls.confirmPassword.valid && this.state.authMode === 'signup'
-            }
-          >
-              SUBMIT
-          </ButtonWithBackground>
+          {submitButton}
         </ImageBackground>
       </KeyboardAvoidingView>
     );
@@ -262,10 +270,16 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = state => {
+  return {
+    isLoading: state.ui.isLoading
+  }
+}
+
 const mapDispathToProps = dispatch => {
   return {
     onLogin: (authData) => dispatch(tryAuth(authData))
   };
 }
 
-export default connect(null, mapDispathToProps)(AuthScreen);
+export default connect(mapStateToProps, mapDispathToProps)(AuthScreen);
