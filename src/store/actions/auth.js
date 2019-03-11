@@ -2,17 +2,16 @@ import { TRY_AUTH } from './actionTypes';
 import { uiStartLoading, uiStopLoading } from './index';
 import startMainTabs from '../../screens/MainTabs/startMainTabs';
 
-export const tryAuth = (authData) => {
-    return dispatch => {
-        console.log("AUTH", authData);
-        dispatch(authSignup(authData));
-    }
-};
+const API_KEY = 'AIzaSyCVeG4SFHzOWO9tOWJddFmFXKQmicBT2yQ'
 
-export const authSignup = (authData) => {
+export const tryAuth = (authData, authMode) => {
     return dispatch => {
         dispatch(uiStartLoading());
-        fetch(`https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyCVeG4SFHzOWO9tOWJddFmFXKQmicBT2yQ`, {
+        let url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser';
+        if (authMode === 'login') {
+            url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword';
+        } 
+        fetch(`${url}?key=${API_KEY}`, {
             method: 'POST',
             body: JSON.stringify({
                 email: authData.email,
@@ -24,7 +23,6 @@ export const authSignup = (authData) => {
             }
         })
         .catch(err => {
-            console.log("err", err);
             alert('Something Happened');
             dispatch(uiStopLoading());
         })
@@ -37,5 +35,5 @@ export const authSignup = (authData) => {
                 startMainTabs();
             }
         })
-    };
-}
+    }
+};

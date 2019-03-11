@@ -75,13 +75,13 @@ class AuthScreen extends Component {
     });
   }
 
-  loginHandler = () => {
+  authHandler = () => {
     const authData = {
       email: this.state.controls.email.value,
       password: this.state.controls.password.value,
     };
 
-    this.props.onLogin(authData);
+    this.props.onTryAuth(authData, this.state.authMode);
   }
 
   updateInputState = (key, value) => {
@@ -130,7 +130,7 @@ class AuthScreen extends Component {
 
     let submitButton = (
       <ButtonWithBackground 
-        onPress={this.loginHandler} 
+        onPress={this.authHandler} 
         color="#29aaf4"
         disabled={
           !controls.email.valid || 
@@ -278,7 +278,7 @@ const mapStateToProps = state => {
 
 const mapDispathToProps = dispatch => {
   return {
-    onLogin: (authData) => dispatch(tryAuth(authData))
+    onTryAuth: (authData, authMode) => dispatch(tryAuth(authData, authMode))
   };
 }
 
