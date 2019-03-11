@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import Wrapper from '../../hoc/Wrapper';
 import PlaceInput from '../../components/PlaceInput/PlaceInput';
@@ -90,6 +90,18 @@ class SharePlaceScreen extends Component {
     }
 
     render() {
+        const { isLoading } = this.props;
+        let submitButton = (
+            <Button 
+                title="Share Place" 
+                onPress={this.placeAddedHandler}
+                disabled={!this.state.controls.placeName.valid || !this.state.controls.location.valid || !this.state.controls.image.valid}
+            />
+        );
+
+        if (isLoading) {
+            submitButton = <ActivityIndicator />;
+        }
         return (
             <ScrollView >
                 <View style={styles.container}>
@@ -105,11 +117,7 @@ class SharePlaceScreen extends Component {
                         onChangeText={this.placeNameChangeHandler}
                     />
                     <View style={styles.button}>
-                        <Button 
-                            title="Share Place" 
-                            onPress={this.placeAddedHandler}
-                            disabled={!this.state.controls.placeName.valid || !this.state.controls.location.valid || !this.state.controls.image.valid}
-                        />
+                        {submitButton}
                     </View>
                 </View>
             </ScrollView>
@@ -134,10 +142,16 @@ const styles = StyleSheet.create({
     }
 })
 
+const mapStateToProps = state => {
+    return {
+        isLoading: state.ui.isLoading
+    };
+};
+
 const mapDispatchToProps = dispatch => {
     return {
         onAddPlace: (placeName, location, image) => dispatch(addPlace(placeName, location, image))
     };
 };
 
-export default connect(null, mapDispatchToProps)(Wrapper(SharePlaceScreen));
+export default connect(mapStateToProps, mapDispatchToProps)(Wrapper(SharePlaceScreen));
