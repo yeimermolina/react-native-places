@@ -1,5 +1,5 @@
 import { 
-    SET_PLACES
+    SET_PLACES, DELETE_PLACE
 } from './actionTypes';
 
 import {
@@ -76,6 +76,28 @@ export const getPlaces = () => {
                 )
             }
             dispatch(setPlaces(places));
+        });
+    }
+}
+
+const removePlace = key => {
+    return {
+        type: DELETE_PLACE,
+        key
+    }
+}
+
+export const deletePlace = (placeId) => {
+    return dispatch => {
+        fetch(`${URL}/places/${placeId}.json`, {
+            method: 'DELETE'
+        })
+        .catch(err => {
+            alert("Something went wrong");
+        })
+        .then(res => res.json())
+        .then(parsedRes => {
+            dispatch(removePlace(placeId));
         });
     }
 }
