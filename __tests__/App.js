@@ -5,11 +5,18 @@
 
 import 'react-native';
 import React from 'react';
-import App from '../App';
+import Auth from '../src/screens/Auth';
+import StoreWrapper from '../src/hoc/Wrapper';
 
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer';
 
+const App = () => (
+  <StoreWrapper>
+    <Auth />
+  </StoreWrapper>
+)
+
 it('renders correctly', () => {
-  renderer.create(<App />);
+  renderer.create(() => StoreWrapper(Auth)());
 });
