@@ -51,8 +51,18 @@ class FindPlaceScreen extends Component {
     }
 
     componentDidMount () {
-      this.props.onLoadPlaces();
+      this.navigationEventListener = Navigation.events().bindComponent(this);
     }
+
+    componentWillUnmount() {
+      if (this.navigationEventListener) {
+          this.navigationEventListener.remove();
+      }
+    }
+
+    componentDidAppear() {
+      this.props.onLoadPlaces();
+  }
 
     render() {
       let content = (

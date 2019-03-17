@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Navigation } from 'react-native-navigation';
 import { View, Text, Button, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import Wrapper from '../../hoc/Wrapper';
@@ -7,7 +8,7 @@ import PickImage from '../../components/PickImage';
 import PickLocation from '../../components/PickLocation';
 import MainText from '../../components/UI/MainText';
 import HeadingText from '../../components/UI/HeadingText';
-import { addPlace } from '../../store/actions';
+import { addPlace, startAddPlace } from '../../store/actions';
 import validate from '../../utility/validation';
 
 class SharePlaceScreen extends Component {
@@ -36,6 +37,18 @@ class SharePlaceScreen extends Component {
                 }
             }
         })
+    }
+
+    redirectToFindPlaces = () => {
+        //Find a way to push to find place top stack
+        Navigation.push(this.props.componentId, {
+            component: {
+              name: 'awesome-places.FindPlaceScreen',
+              passProps: {
+                text: 'Pushed screen'
+              }
+            }
+          });
     }
 
     placeAddedHandler = () => {
@@ -97,6 +110,27 @@ class SharePlaceScreen extends Component {
         this.reset();
     }
 
+    componentDidMount() {
+        this.navigationEventListener = Navigation.events().bindComponent(this);
+    }
+
+    componentWillUnmount() {
+        if (this.navigationEventListener) {
+            this.navigationEventListener.remove();
+        }
+    }
+
+    componentDidAppear() {
+        this.props.onStartAddPlace();
+    }
+
+    componentDidUpdate() {
+        if (this.props.placeAdded) {
+            this.redirectToFindPlaces();
+            this.props.onStartAddPlace();
+        }
+    }
+
     render() {
         const { isLoading } = this.props;
         let submitButton = (
@@ -154,13 +188,15 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     return {
-        isLoading: state.ui.isLoading
+        isLoading: state.ui.isLoading,
+        placeAdded: state.places.placeAdded
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAddPlace: (placeName, location, image) => dispatch(addPlace(placeName, location, image))
+        onAddPlace: (placeName, location, image) => dispatch(addPlace(placeName, location, image)),
+        onStartAddPlace: () => dispatch(startAddPlace())
     };
 };
 

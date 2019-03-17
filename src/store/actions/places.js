@@ -1,5 +1,8 @@
 import { 
-    SET_PLACES, DELETE_PLACE
+    SET_PLACES,
+    DELETE_PLACE,
+    PLACED_ADDED,
+    START_ADD_PLACE
 } from './actionTypes';
 
 import {
@@ -9,6 +12,12 @@ import {
 } from './index';
 
 const URL = 'https://findplaces-1552244770863.firebaseio.com';
+
+export const startAddPlace = () => {
+    return {
+        type: START_ADD_PLACE
+    }
+}
 
 export const addPlace = (placeName, location, image) => {
     return dispatch => {
@@ -55,6 +64,7 @@ export const addPlace = (placeName, location, image) => {
             .then(parsedRes => {
                 console.log(parsedRes);
                 dispatch(uiStopLoading());
+                dispatch(placeAdded());
             })
         
     }
@@ -102,6 +112,12 @@ export const getPlaces = () => {
         
         ;
     }
+}
+
+export const placeAdded = () => {
+    return {
+        type: PLACED_ADDED
+    };
 }
 
 const removePlace = key => {

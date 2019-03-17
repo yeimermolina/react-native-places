@@ -73,7 +73,7 @@ class PickLocation extends Component {
             <View style={styles.container}>
                 <MapView 
                     initialRegion={this.state.focusedLocation}
-                    // region={this.state.focusedLocation}
+                    // region={!this.state.locationChosen ? this.state.focusedLocation : null}
                     style={styles.map}
                     onPress={this.pickLocationHandler}
                     ref={ref => this.map = ref}
