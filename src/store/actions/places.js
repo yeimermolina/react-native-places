@@ -43,7 +43,13 @@ export const addPlace = (placeName, location, image) => {
                 alert("Something went wrong");
                 dispatch(uiStopLoading());
             })
-            .then(res => res.json())
+            .then(res => {
+                if(res.ok) {
+                    return res.json()
+                } else {
+                    throw(new Error());
+                }
+            })
             .then(parsedRes => {
                 const placeData = {
                     name: placeName,
