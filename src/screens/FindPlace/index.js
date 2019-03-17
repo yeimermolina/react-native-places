@@ -4,8 +4,8 @@ import Wrapper from '../../hoc/Wrapper';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { connect } from 'react-redux';
 
-import PlaceList from '../../components/PlaceList/PlaceList'
-import { getPlaces } from '../../store/actions'
+import PlaceList from '../../components/PlaceList/PlaceList';
+import { getPlaces } from '../../store/actions';
 
 class FindPlaceScreen extends Component {
   state = {

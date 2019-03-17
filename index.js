@@ -68,6 +68,7 @@ Navigation.events().registerAppLaunchedListener(() => {
     Navigation.setRoot({
     root: {
         component: {
+        id: 'login-screen',
         name: "awesome-places.AuthScreen",
         title: "dddd",
         text: 'dddd',

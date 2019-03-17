@@ -1,9 +1,20 @@
 import { AsyncStorage } from 'react-native';
-import { TRY_AUTH, AUTH_SET_TOKEN } from './actionTypes';
+import { Navigation } from 'react-native-navigation';
+import { AUTH_SET_TOKEN, AUTH_REMOVE_TOKEN } from './actionTypes';
 import { uiStartLoading, uiStopLoading } from './index';
 import startMainTabs from '../../screens/MainTabs/startMainTabs';
 
-const API_KEY = 'AIzaSyCVeG4SFHzOWO9tOWJddFmFXKQmicBT2yQ'
+const API_KEY = 'AIzaSyCVeG4SFHzOWO9tOWJddFmFXKQmicBT2yQ';
+
+const redirectToLogin = () => {
+    Navigation.setRoot({
+        root: {
+            component: {
+            id: 'login-screen',
+            name: "awesome-places.AuthScreen"
+        }   
+    }});
+}
 
 export const tryAuth = (authData, authMode) => {
     return (dispatch) => {
@@ -142,6 +153,24 @@ export const authClearStorage = () => {
     return dispatch => {
         AsyncStorage.removeItem("ap:auth:token");
         AsyncStorage.removeItem("ap:auth:expiryDate");
+        return AsyncStorage.removeItem("ap:auth:refreshToken");
     }
     
 }
+
+export const authLogout = () => {
+    return dispatch => {
+        dispatch(authClearStorage())
+            .then(() => {
+                redirectToLogin();
+                console.log("LOG OUT SUCCESSFULLY");
+            });
+        dispatch(authRemoveToken());
+    };
+}
+
+export const authRemoveToken = () => {
+    return {
+        type: AUTH_REMOVE_TOKEN
+    };
+};
