@@ -40,15 +40,11 @@ class SharePlaceScreen extends Component {
     }
 
     redirectToFindPlaces = () => {
-        //Find a way to push to find place top stack
-        Navigation.push(this.props.componentId, {
-            component: {
-              name: 'awesome-places.FindPlaceScreen',
-              passProps: {
-                text: 'Pushed screen'
-              }
+        Navigation.mergeOptions(this.props.componentId, {
+            bottomTabs: {
+                currentTabIndex: 0
             }
-          });
+        });
     }
 
     placeAddedHandler = () => {
